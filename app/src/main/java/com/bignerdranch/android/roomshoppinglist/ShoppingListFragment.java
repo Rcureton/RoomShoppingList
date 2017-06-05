@@ -23,6 +23,7 @@ public class ShoppingListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO: Have to fix this call I think it's database related
 //        mShoppingListViewModel = ViewModelProviders.of(this).get(ShoppingListViewModel.class);
     }
 
