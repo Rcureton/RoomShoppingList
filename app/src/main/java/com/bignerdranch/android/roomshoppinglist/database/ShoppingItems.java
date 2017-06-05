@@ -4,6 +4,8 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.util.Date;
+
 @Entity
 public class ShoppingItems {
 
@@ -11,7 +13,7 @@ public class ShoppingItems {
     private int uid;
 
     @ColumnInfo(name = "date")
-    private String date;
+    private Date date;
 
     @ColumnInfo(name = "item")
     private String item;
@@ -31,11 +33,11 @@ public class ShoppingItems {
         this.uid = uid;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

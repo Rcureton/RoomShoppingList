@@ -16,8 +16,9 @@ public interface ShoppingItemsDao {
     @Query("SELECT * FROM shoppingItems WHERE purchased != 0") List<ShoppingItems> getPurchasedItems();
 
     @Insert
-    void insertAll(ShoppingItems items);
+    public void insertItems(ShoppingItems items);
 
     @Delete
-    void delete(ShoppingItems items);
+    public void delete(ShoppingItems items);
+
 }
