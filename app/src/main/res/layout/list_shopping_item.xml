@@ -11,6 +11,8 @@
             android:id="@+id/list_item_title_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="16sp"
             android:text="name of item"/>
 
         <TextView
@@ -21,6 +23,7 @@
 
         <TextView
             android:id="@+id/list_item_store_text_view"
+            android:textStyle="italic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name of the store"/>

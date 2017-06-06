@@ -1,6 +1,9 @@
 package com.bignerdranch.android.roomshoppinglist;
 
+import android.arch.persistence.room.Room;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,17 +16,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bignerdranch.android.roomshoppinglist.database.AppDatabase;
 import com.bignerdranch.android.roomshoppinglist.database.ShoppingItems;
 import com.bignerdranch.android.roomshoppinglist.databinding.FragmentShoppingListBinding;
 import com.bignerdranch.android.roomshoppinglist.databinding.ListShoppingItemBinding;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ShoppingListFragment extends Fragment {
 
     private FragmentShoppingListBinding mBinding;
-    private ShoppingListViewModel mShoppingListViewModel;
+//    private ShoppingListViewModel mShoppingListViewModel;
     private ShoppingListAdapter mAdapter;
+    private AppDatabase mDatabase;
+    private List<ShoppingItems> mShoppingItems;
 
     public static ShoppingListFragment newInstance() {
         return new ShoppingListFragment();
@@ -33,9 +40,10 @@ public class ShoppingListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, "shopping-list").build();
 
-        //TODO: Have to fix this call I think it's database related
-//        mShoppingListViewModel = ViewModelProviders.of(this).get(ShoppingListViewModel.class);
+        new DatabaseAsyc().execute();
+
     }
 
     @Nullable
@@ -43,6 +51,7 @@ public class ShoppingListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_shopping_list, container, false);
         mBinding.shoppingListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        updateUI();
 
         return mBinding.getRoot();
     }
@@ -58,7 +67,8 @@ public class ShoppingListFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.add_shopping_item:
                 ShoppingItems shoppingItems = new ShoppingItems();
-
+//                mShoppingListViewModel.addItem(shoppingItems);
+                updateUI();
         }
         return super.onOptionsItemSelected(item);
 
@@ -66,19 +76,26 @@ public class ShoppingListFragment extends Fragment {
 
     private void updateUI() {
 
-
+        if (mAdapter == null) {
+            mAdapter = new ShoppingListAdapter(mShoppingItems);
+        } else {
+            mAdapter.setShoppingItems(mShoppingItems);
+            mAdapter.notifyDataSetChanged();
+        }
         mBinding.shoppingListRecyclerView.setAdapter(mAdapter);
 
     }
 
-    private static class ShoppingListItemHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+
+    private class ShoppingListItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ListShoppingItemBinding mItemBinding;
         private ShoppingItems mShoppingItems;
-
-        public static ShoppingListItemHolder create(LayoutInflater inflater, ViewGroup parent) {
-            ListShoppingItemBinding mBinding = ListShoppingItemBinding.inflate(inflater, parent, false);
-            return new ShoppingListItemHolder(mBinding);
-        }
 
         public ShoppingListItemHolder(ListShoppingItemBinding binding) {
             super(binding.getRoot());
@@ -90,9 +107,15 @@ public class ShoppingListFragment extends Fragment {
             mShoppingItems = shoppingItems;
             mItemBinding.listItemTitleTextView.setText(mShoppingItems.getItem());
             mItemBinding.listItemStoreTextView.setText(mShoppingItems.getStore());
-            mItemBinding.listItemDateTextView.setText(mShoppingItems.getDate().toString());
+            mItemBinding.listItemDateTextView.setText(mShoppingItems.getDate());
             mItemBinding.listItemPurchasedCheckbox.setVisibility(mShoppingItems.isPurchased() ? View.VISIBLE : View.GONE);
 
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = ShoppingItemActivity.newIntent(getActivity(), mShoppingItems.getUuid());
+            startActivity(intent);
         }
     }
 
@@ -105,7 +128,9 @@ public class ShoppingListFragment extends Fragment {
 
         @Override
         public ShoppingListItemHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            return ShoppingListItemHolder.create(LayoutInflater.from(viewGroup.getContext()), viewGroup);
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            ListShoppingItemBinding binding = ListShoppingItemBinding.inflate(inflater, viewGroup, false);
+            return new ShoppingListItemHolder(binding);
         }
 
         @Override
@@ -121,6 +146,22 @@ public class ShoppingListFragment extends Fragment {
 
         public void setShoppingItems(List<ShoppingItems> items) {
             mShoppingItems = items;
+        }
+    }
+
+    private class DatabaseAsyc extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ShoppingItems shoppingItems = new ShoppingItems();
+            shoppingItems.setUuid(UUID.randomUUID().clockSequence());
+            shoppingItems.setItem("Deodorant");
+            shoppingItems.setStore("Target");
+            shoppingItems.setDate("June 6th 2017");
+
+            mDatabase.shoppingItemsDao().insertItems(shoppingItems);
+            mShoppingItems = mDatabase.shoppingItemsDao().getAllItems();
+            return null;
         }
     }
 }

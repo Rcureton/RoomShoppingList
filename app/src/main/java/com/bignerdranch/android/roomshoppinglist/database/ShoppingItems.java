@@ -4,16 +4,14 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import java.util.Date;
-
 @Entity
 public class ShoppingItems {
 
     @PrimaryKey
-    private int uid;
+    private int mUuid;
 
     @ColumnInfo(name = "date")
-    private Date date;
+    private String date;
 
     @ColumnInfo(name = "item")
     private String item;
@@ -25,19 +23,19 @@ public class ShoppingItems {
     private boolean purchased;
 
 
-    public int getUid() {
-        return uid;
+    public int getUuid() {
+        return mUuid;
     }
 
-    public void setUid(int uid) {
-        this.uid = uid;
+    public void setUuid(int uuid) {
+        this.mUuid = uuid;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
