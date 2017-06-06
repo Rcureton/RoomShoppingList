@@ -13,8 +13,8 @@ import com.bignerdranch.android.roomshoppinglist.databinding.FragmentShoppingLis
 
 public class ShoppingListFragment extends Fragment {
 
-    FragmentShoppingListBinding mBinding;
-    ShoppingListViewModel mShoppingListViewModel;
+    private FragmentShoppingListBinding mBinding;
+    private ShoppingListViewModel mShoppingListViewModel;
 
     public static ShoppingListFragment newInstance() {
         return new ShoppingListFragment();

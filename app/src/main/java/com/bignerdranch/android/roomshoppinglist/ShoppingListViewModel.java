@@ -19,7 +19,8 @@ public class ShoppingListViewModel extends AndroidViewModel {
 
         createDb();
 
-       mShoppingItems = mDatabase.shoppingItemsDao().getAllItems();
+        mShoppingItems = mDatabase.shoppingItemsDao()
+                .getAllItems();
     }
 
     public List<ShoppingItems> getItems() {
@@ -28,6 +29,7 @@ public class ShoppingListViewModel extends AndroidViewModel {
 
     private void createDb() {
         //TODO: Have to make this an Async process to get items out of the database
-        mDatabase = Room.databaseBuilder(getApplication(), AppDatabase.class, "shopping-list").build();
+        mDatabase = Room.databaseBuilder(getApplication(), AppDatabase.class, "shopping-list")
+                .build();
     }
 }
