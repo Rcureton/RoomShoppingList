@@ -44,7 +44,8 @@ public class ShoppingItemFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, "shopping-list").build();
+        mDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, "shopping-list")
+                .build();
 //        UUID itemId = (UUID) getArguments().getSerializable(ARG_ITEM_ID);
 //        mShoppingItems = mDatabase.shoppingItemsDao().getItem(itemId);
 
@@ -76,22 +77,27 @@ public class ShoppingItemFragment extends Fragment {
     }
 
     private void updateItem() {
-        mDatabase.shoppingItemsDao().updateItem(mShoppingItems);
+        mDatabase.shoppingItemsDao()
+                .updateItem(mShoppingItems);
         mCallbacks.onItemUpdated(mShoppingItems);
     }
 
 
-    private class DatabaseAsyc extends AsyncTask<Void,Void,Void> {
+    private class DatabaseAsyc extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
             ShoppingItems shoppingItems = new ShoppingItems();
-            shoppingItems.setId(UUID.randomUUID().hashCode());
-            shoppingItems.setItem(mItemBinding.fragmentShoppingEditText.getText().toString());
-            shoppingItems.setStore(mItemBinding.fragmentShoppingStoreEditText.getText().toString());
+            shoppingItems.setId(UUID.randomUUID()
+                    .hashCode());
+            shoppingItems.setItem(mItemBinding.fragmentShoppingEditText.getText()
+                    .toString());
+            shoppingItems.setStore(mItemBinding.fragmentShoppingStoreEditText.getText()
+                    .toString());
             shoppingItems.setDate(mDate.toString());
 
-            mDatabase.shoppingItemsDao().insertItems(shoppingItems);
+            mDatabase.shoppingItemsDao()
+                    .insertItems(shoppingItems);
             return null;
         }
     }

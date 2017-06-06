@@ -7,20 +7,15 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class ShoppingItems {
 
-    @PrimaryKey
-    private int id;
+    @PrimaryKey private int id;
 
-    @ColumnInfo(name = "date")
-    private String date;
+    @ColumnInfo(name = "date") private String date;
 
-    @ColumnInfo(name = "item")
-    private String item;
+    @ColumnInfo(name = "item") private String item;
 
-    @ColumnInfo(name = "store")
-    private String store;
+    @ColumnInfo(name = "store") private String store;
 
-    @ColumnInfo(name = "purchased")
-    private boolean purchased;
+    @ColumnInfo(name = "purchased") private boolean purchased;
 
 
     public int getId() {
