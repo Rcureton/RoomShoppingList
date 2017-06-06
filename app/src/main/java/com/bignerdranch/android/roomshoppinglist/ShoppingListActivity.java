@@ -13,6 +13,5 @@ public class ShoppingListActivity extends SLSingleFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_shopping_list);
     }
 }
