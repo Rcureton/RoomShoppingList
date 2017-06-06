@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey;
 public class ShoppingItems {
 
     @PrimaryKey
-    private int mUuid;
+    private int id;
 
     @ColumnInfo(name = "date")
     private String date;
@@ -23,12 +23,12 @@ public class ShoppingItems {
     private boolean purchased;
 
 
-    public int getUuid() {
-        return mUuid;
+    public int getId() {
+        return id;
     }
 
-    public void setUuid(int uuid) {
-        this.mUuid = uuid;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getDate() {

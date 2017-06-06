@@ -27,7 +27,6 @@ import java.util.UUID;
 public class ShoppingListFragment extends Fragment {
 
     private FragmentShoppingListBinding mBinding;
-//    private ShoppingListViewModel mShoppingListViewModel;
     private ShoppingListAdapter mAdapter;
     private AppDatabase mDatabase;
     private List<ShoppingItems> mShoppingItems;
@@ -40,7 +39,8 @@ public class ShoppingListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, "shopping-list").build();
+        mDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, "shopping-list")
+                .build();
 
         new DatabaseAsyc().execute();
 
@@ -67,7 +67,8 @@ public class ShoppingListFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.add_shopping_item:
                 ShoppingItems shoppingItems = new ShoppingItems();
-//                mShoppingListViewModel.addItem(shoppingItems);
+                Intent intent = ShoppingItemActivity.newIntent(getContext(), shoppingItems.getId());
+                startActivity(intent);
                 updateUI();
         }
         return super.onOptionsItemSelected(item);
@@ -93,7 +94,7 @@ public class ShoppingListFragment extends Fragment {
     }
 
 
-    private class ShoppingListItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    private class ShoppingListItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ListShoppingItemBinding mItemBinding;
         private ShoppingItems mShoppingItems;
 
@@ -114,7 +115,7 @@ public class ShoppingListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Intent intent = ShoppingItemActivity.newIntent(getActivity(), mShoppingItems.getUuid());
+            Intent intent = ShoppingItemActivity.newIntent(getActivity(), mShoppingItems.getId());
             startActivity(intent);
         }
     }
@@ -149,18 +150,27 @@ public class ShoppingListFragment extends Fragment {
         }
     }
 
-    private class DatabaseAsyc extends AsyncTask<Void,Void,Void> {
+    private class DatabaseAsyc extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
 
         @Override
         protected Void doInBackground(Void... voids) {
             ShoppingItems shoppingItems = new ShoppingItems();
-            shoppingItems.setUuid(UUID.randomUUID().clockSequence());
+            shoppingItems.setId(UUID.randomUUID()
+                    .hashCode());
             shoppingItems.setItem("Deodorant");
             shoppingItems.setStore("Target");
             shoppingItems.setDate("June 6th 2017");
 
-            mDatabase.shoppingItemsDao().insertItems(shoppingItems);
-            mShoppingItems = mDatabase.shoppingItemsDao().getAllItems();
+            mDatabase.shoppingItemsDao()
+                    .insertItems(shoppingItems);
+            mShoppingItems = mDatabase.shoppingItemsDao()
+                    .getAllItems();
             return null;
         }
     }
