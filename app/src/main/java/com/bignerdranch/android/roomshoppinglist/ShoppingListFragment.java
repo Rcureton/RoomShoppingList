@@ -31,6 +31,7 @@ public class ShoppingListFragment extends Fragment {
     private AppDatabase mDatabase;
     private List<ShoppingItems> mShoppingItems;
 
+
     public static ShoppingListFragment newInstance() {
         return new ShoppingListFragment();
     }
