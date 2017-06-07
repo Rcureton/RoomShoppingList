@@ -21,6 +21,7 @@ import com.bignerdranch.android.roomshoppinglist.database.ShoppingItem;
 import com.bignerdranch.android.roomshoppinglist.databinding.FragmentShoppingListBinding;
 import com.bignerdranch.android.roomshoppinglist.databinding.ListShoppingItemBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingListFragment extends Fragment {
@@ -41,8 +42,7 @@ public class ShoppingListFragment extends Fragment {
         setHasOptionsMenu(true);
         mDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, getString(R.string.database_name))
                 .build();
-
-        new DatabaseAsyc().execute();
+        mShoppingItems = new ArrayList<>();
 
     }
 
@@ -54,6 +54,13 @@ public class ShoppingListFragment extends Fragment {
         updateUI();
 
         return mBinding.getRoot();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        new DatabaseAsyc().execute();
+
     }
 
     @Override
@@ -105,7 +112,7 @@ public class ShoppingListFragment extends Fragment {
             mShoppingItem = shoppingItem;
             mItemBinding.listItemTitleTextView.setText(mShoppingItem.getItem());
             mItemBinding.listItemStoreTextView.setText(mShoppingItem.getStore());
-            mItemBinding.listItemDateTextView.setText(mShoppingItem.getDate());
+            mItemBinding.listItemDateTextView.setText(mShoppingItem.getDate().toString());
             mItemBinding.listItemPurchasedCheckbox.setVisibility(mShoppingItem.isPurchased() ? View.VISIBLE : View.GONE);
 
         }
@@ -158,11 +165,12 @@ public class ShoppingListFragment extends Fragment {
             return null;
         }
 
+
+
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
-
+            updateUI();
         }
     }
 }

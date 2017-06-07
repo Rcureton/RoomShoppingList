@@ -18,6 +18,9 @@ public interface ShoppingItemsDao {
     @Query("SELECT * FROM shoppingitem WHERE purchased != 0")
     List<ShoppingItem> getPurchasedItems();
 
+    @Query("SELECT * FROM shoppingitem WHERE id=:id")
+    ShoppingItem getItem(int id);
+
     @Update
     public void updateItem(ShoppingItem shoppingItem);
 

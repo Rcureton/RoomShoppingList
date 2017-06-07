@@ -4,13 +4,17 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+
+import java.util.Date;
 
 @Entity
+@TypeConverters(DateConverter.class)
 public class ShoppingItem {
 
-    @PrimaryKey private int id;
+    @PrimaryKey(autoGenerate = true) private int id;
 
-    @ColumnInfo(name = "date") private String date;
+    @ColumnInfo(name = "date") private Date date;
 
     @ColumnInfo(name = "item") private String item;
 
@@ -19,10 +23,16 @@ public class ShoppingItem {
     @ColumnInfo(name = "purchased") private boolean purchased;
 
     public ShoppingItem() {
+
     }
 
     @Ignore
-    public ShoppingItem(int id, String item, String store, String date) {
+    public ShoppingItem(int id) {
+        this.id = id;
+    }
+
+    @Ignore
+    public ShoppingItem(int id, String item, String store, Date date) {
         this.id = id;
         this.item = item;
         this.store = store;
@@ -37,11 +47,11 @@ public class ShoppingItem {
         this.id = id;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

@@ -86,8 +86,7 @@ public class ShoppingItemFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            ShoppingItem shoppingItem = new ShoppingItem(UUID.randomUUID()
-                    .hashCode(), mItemTitle, mStoreName, mDate.toString());
+            ShoppingItem shoppingItem = new ShoppingItem(UUID.randomUUID().hashCode(), mItemTitle, mStoreName, mDate);
 
             mDatabase.shoppingItemsDao()
                     .insertItems(shoppingItem);
