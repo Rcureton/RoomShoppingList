@@ -2,10 +2,11 @@ package com.bignerdranch.android.roomshoppinglist.database;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity
-public class ShoppingItems {
+public class ShoppingItem {
 
     @PrimaryKey private int id;
 
@@ -17,6 +18,16 @@ public class ShoppingItems {
 
     @ColumnInfo(name = "purchased") private boolean purchased;
 
+    public ShoppingItem() {
+    }
+
+    @Ignore
+    public ShoppingItem(int id, String item, String store, String date) {
+        this.id = id;
+        this.item = item;
+        this.store = store;
+        this.date = date;
+    }
 
     public int getId() {
         return id;

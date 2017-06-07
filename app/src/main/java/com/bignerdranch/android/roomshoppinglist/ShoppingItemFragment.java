@@ -1,7 +1,6 @@
 package com.bignerdranch.android.roomshoppinglist;
 
 import android.arch.persistence.room.Room;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bignerdranch.android.roomshoppinglist.database.AppDatabase;
-import com.bignerdranch.android.roomshoppinglist.database.ShoppingItems;
+import com.bignerdranch.android.roomshoppinglist.database.ShoppingItem;
 import com.bignerdranch.android.roomshoppinglist.databinding.FragmentShoppingItemBinding;
 
 import java.util.Date;
@@ -23,14 +22,12 @@ public class ShoppingItemFragment extends Fragment {
     private static final String ARG_ITEM_ID = "item_id";
 
     private FragmentShoppingItemBinding mItemBinding;
-    private ShoppingItems mShoppingItems;
+    private ShoppingItem mShoppingItem;
     private AppDatabase mDatabase;
-    private Callbacks mCallbacks;
     private Date mDate;
+    private String mItemTitle;
+    private String mStoreName;
 
-    public interface Callbacks {
-        void onItemUpdated(ShoppingItems shoppingItems);
-    }
 
     public static ShoppingItemFragment newInstance(int uuid) {
         Bundle args = new Bundle();
@@ -44,10 +41,9 @@ public class ShoppingItemFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, "shopping-list")
+        mDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, getString(R.string.database_name))
                 .build();
-//        UUID itemId = (UUID) getArguments().getSerializable(ARG_ITEM_ID);
-//        mShoppingItems = mDatabase.shoppingItemsDao().getItem(itemId);
+
 
     }
 
@@ -58,19 +54,23 @@ public class ShoppingItemFragment extends Fragment {
 
         mDate = new Date();
         mItemBinding.fragmentShoppingDateButton.setOnClickListener(v -> {
+
+            mItemTitle = mItemBinding.fragmentShoppingEditText.getText()
+                    .toString();
+            mStoreName = mItemBinding.fragmentShoppingStoreEditText.getText()
+                    .toString();
+
             mItemBinding.fragmentShoppingDateButton.setText(String.valueOf(mDate.getTime()));
         });
 
-//        mItemBinding.fragmentShoppingCheckBox.setChecked(mShoppingItems.isPurchased());
         mItemBinding.fragmentShoppingCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            mShoppingItems.setPurchased(isChecked);
+            mShoppingItem.setPurchased(isChecked);
             updateItem();
         });
 
         mItemBinding.fragmentShoppingSaveButton.setOnClickListener(v -> {
             new DatabaseAsyc().execute();
-            Intent intent = new Intent(getContext(), ShoppingListActivity.class);
-            startActivity(intent);
+            getActivity().finish();
         });
 
         return mItemBinding.getRoot();
@@ -78,8 +78,7 @@ public class ShoppingItemFragment extends Fragment {
 
     private void updateItem() {
         mDatabase.shoppingItemsDao()
-                .updateItem(mShoppingItems);
-        mCallbacks.onItemUpdated(mShoppingItems);
+                .updateItem(mShoppingItem);
     }
 
 
@@ -87,17 +86,11 @@ public class ShoppingItemFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            ShoppingItems shoppingItems = new ShoppingItems();
-            shoppingItems.setId(UUID.randomUUID()
-                    .hashCode());
-            shoppingItems.setItem(mItemBinding.fragmentShoppingEditText.getText()
-                    .toString());
-            shoppingItems.setStore(mItemBinding.fragmentShoppingStoreEditText.getText()
-                    .toString());
-            shoppingItems.setDate(mDate.toString());
+            ShoppingItem shoppingItem = new ShoppingItem(UUID.randomUUID()
+                    .hashCode(), mItemTitle, mStoreName, mDate.toString());
 
             mDatabase.shoppingItemsDao()
-                    .insertItems(shoppingItems);
+                    .insertItems(shoppingItem);
             return null;
         }
     }

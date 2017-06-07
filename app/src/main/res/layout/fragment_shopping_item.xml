@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         >
 
-
         <TextView
             android:id="@+id/fragment_shopping_text_view"
             android:layout_width="279dp"

@@ -6,28 +6,25 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.bignerdranch.android.roomshoppinglist.database.ShoppingItems;
+import com.bignerdranch.android.roomshoppinglist.database.ShoppingItem;
 
 import java.util.List;
 
 @Dao
 public interface ShoppingItemsDao {
-    @Query("SELECT * FROM shoppingitems")
-    List<ShoppingItems> getAllItems();
+    @Query("SELECT * FROM shoppingitem")
+    List<ShoppingItem> getAllItems();
 
-    @Query("SELECT * FROM shoppingItems WHERE purchased != 0")
-    List<ShoppingItems> getPurchasedItems();
-
-//    @Query("SELECT * FROM shoppingItems WHERE Uuid=:Uuid")
-//    ShoppingItems getItem(UUID uuid);
+    @Query("SELECT * FROM shoppingitem WHERE purchased != 0")
+    List<ShoppingItem> getPurchasedItems();
 
     @Update
-    public void updateItem(ShoppingItems shoppingItems);
+    public void updateItem(ShoppingItem shoppingItem);
 
     @Insert
-    public void insertItems(ShoppingItems items);
+    public void insertItems(ShoppingItem items);
 
     @Delete
-    public void delete(ShoppingItems items);
+    public void delete(ShoppingItem items);
 
 }
