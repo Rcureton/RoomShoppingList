@@ -1,5 +1,6 @@
 package com.bignerdranch.android.roomshoppinglist.database.dao;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -13,7 +14,7 @@ import java.util.List;
 @Dao
 public interface ShoppingItemsDao {
     @Query("SELECT * FROM shoppingitem")
-    List<ShoppingItem> getAllItems();
+    LiveData<List<ShoppingItem>> getAllItems();
 
     @Query("SELECT * FROM shoppingitem WHERE purchased != 0")
     List<ShoppingItem> getPurchasedItems();

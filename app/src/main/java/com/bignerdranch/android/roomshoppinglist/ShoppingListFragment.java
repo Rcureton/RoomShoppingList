@@ -1,22 +1,22 @@
 package com.bignerdranch.android.roomshoppinglist;
 
-import android.arch.persistence.room.Room;
+import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.bignerdranch.android.roomshoppinglist.database.AppDatabase;
 import com.bignerdranch.android.roomshoppinglist.database.ShoppingItem;
@@ -26,12 +26,13 @@ import com.bignerdranch.android.roomshoppinglist.databinding.ListShoppingItemBin
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShoppingListFragment extends Fragment {
+public class ShoppingListFragment extends LifecycleFragment {
 
     private FragmentShoppingListBinding mBinding;
     private ShoppingListAdapter mAdapter;
     private AppDatabase mDatabase;
-    private List<ShoppingItem> mShoppingItems;
+    private List<ShoppingItem> mShoppingItems = new ArrayList<>();
+    private ShoppingListViewModel mShoppingListViewModel;
 
 
     public static ShoppingListFragment newInstance() {
@@ -42,9 +43,6 @@ public class ShoppingListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, getString(R.string.database_name))
-                .build();
-        mShoppingItems = new ArrayList<>();
 
     }
 
@@ -53,22 +51,16 @@ public class ShoppingListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_shopping_list, container, false);
         mBinding.shoppingListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        updateUI();
+        mAdapter = new ShoppingListAdapter(new ArrayList<>());
+        mBinding.shoppingListRecyclerView.setAdapter(mAdapter);
+
+        mShoppingListViewModel = ViewModelProviders.of(this).get(ShoppingListViewModel.class);
+        mShoppingListViewModel.getItems().observe(this, items -> {
+            Log.d("EVENT", "list #" + items);
+            mAdapter.setShoppingItems(items);
+        });
 
         return mBinding.getRoot();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        new DatabaseAsyc().execute();
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateUI();
     }
 
     @Override
@@ -84,21 +76,9 @@ public class ShoppingListFragment extends Fragment {
                 ShoppingItem shoppingItem = new ShoppingItem();
                 Intent intent = ShoppingItemActivity.newIntent(getContext(), shoppingItem.getId());
                 startActivity(intent);
-                updateUI();
         }
         return super.onOptionsItemSelected(item);
 
-    }
-
-    private void updateUI() {
-        if (mAdapter == null) {
-            mAdapter = new ShoppingListAdapter(mShoppingItems);
-        } else {
-            mAdapter.setShoppingItems(mShoppingItems);
-            mAdapter.notifyDataSetChanged();
-        }
-
-        mBinding.shoppingListRecyclerView.setAdapter(mAdapter);
     }
 
     private class ShoppingListItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -107,6 +87,7 @@ public class ShoppingListFragment extends Fragment {
 
         public ShoppingListItemHolder(ListShoppingItemBinding binding) {
             super(binding.getRoot());
+            itemView.setOnClickListener(this);
 
             mItemBinding = binding;
         }
@@ -122,10 +103,8 @@ public class ShoppingListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(), "I was clicked" + mShoppingItems.toString(), Toast.LENGTH_SHORT)
-                    .show();
-//            Intent intent = ShoppingItemActivity.newIntent(getActivity(), mShoppingItem.getId());
-//            startActivity(intent);
+            Intent intent = ShoppingItemActivity.newIntent(getActivity(), mShoppingItem.getId());
+            startActivity(intent);
         }
     }
 
@@ -156,25 +135,10 @@ public class ShoppingListFragment extends Fragment {
         }
 
         public void setShoppingItems(List<ShoppingItem> items) {
-            mShoppingItems = items;
+            mShoppingItems.clear();
+            mShoppingItems.addAll(items);
+            notifyDataSetChanged();
         }
     }
 
-    private class DatabaseAsyc extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-            mShoppingItems = mDatabase.shoppingItemsDao()
-                    .getAllItems();
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            updateUI();
-        }
-    }
 }

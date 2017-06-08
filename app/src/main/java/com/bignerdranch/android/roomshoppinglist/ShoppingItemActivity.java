@@ -4,15 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 
-import java.util.UUID;
-
 public class ShoppingItemActivity extends SLSingleFragmentActivity {
 
     private static final String EXTRA_ITEM_ID = "com.bignerdranch.android.roomshoppinglist.item.id";
 
-    public static Intent newIntent(Context context, int uuid) {
+    public static Intent newIntent(Context context, int id) {
         Intent intent = new Intent(context, ShoppingItemActivity.class);
-        intent.putExtra(EXTRA_ITEM_ID, uuid);
+        intent.putExtra(EXTRA_ITEM_ID, id);
         return intent;
     }
 

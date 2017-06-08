@@ -1,11 +1,11 @@
 package com.bignerdranch.android.roomshoppinglist;
 
+import android.arch.lifecycle.LifecycleFragment;
 import android.arch.persistence.room.Room;
 import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +17,7 @@ import com.bignerdranch.android.roomshoppinglist.databinding.FragmentShoppingIte
 import java.util.Date;
 import java.util.UUID;
 
-public class ShoppingItemFragment extends Fragment {
+public class ShoppingItemFragment extends LifecycleFragment {
 
     private static final String ARG_ITEM_ID = "item_id";
 
@@ -27,6 +27,7 @@ public class ShoppingItemFragment extends Fragment {
     private Date mDate;
     private String mItemTitle;
     private String mStoreName;
+    private int mId;
 
 
     public static ShoppingItemFragment newInstance(int uuid) {
@@ -44,7 +45,12 @@ public class ShoppingItemFragment extends Fragment {
         mDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, getString(R.string.database_name))
                 .build();
 
+        mId = getArguments().getInt(ARG_ITEM_ID);
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     @Nullable
@@ -53,6 +59,7 @@ public class ShoppingItemFragment extends Fragment {
         mItemBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_shopping_item, container, false);
 
         mDate = new Date();
+
         mItemBinding.fragmentShoppingDateButton.setOnClickListener(v -> {
 
             mItemTitle = mItemBinding.fragmentShoppingEditText.getText()
@@ -81,7 +88,6 @@ public class ShoppingItemFragment extends Fragment {
                 .updateItem(mShoppingItem);
     }
 
-
     private class DatabaseAsyc extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -90,6 +96,7 @@ public class ShoppingItemFragment extends Fragment {
 
             mDatabase.shoppingItemsDao()
                     .insertItems(shoppingItem);
+
             return null;
         }
     }
