@@ -43,8 +43,6 @@ public class ShoppingItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, getString(R.string.database_name))
                 .build();
-
-
     }
 
     @Nullable
@@ -80,7 +78,6 @@ public class ShoppingItemFragment extends Fragment {
         mDatabase.shoppingItemsDao()
                 .updateItem(mShoppingItem);
     }
-
 
     private class DatabaseAsyc extends AsyncTask<Void, Void, Void> {
 

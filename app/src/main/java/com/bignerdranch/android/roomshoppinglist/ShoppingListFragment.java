@@ -21,6 +21,7 @@ import com.bignerdranch.android.roomshoppinglist.database.ShoppingItem;
 import com.bignerdranch.android.roomshoppinglist.databinding.FragmentShoppingListBinding;
 import com.bignerdranch.android.roomshoppinglist.databinding.ListShoppingItemBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingListFragment extends Fragment {
@@ -28,7 +29,7 @@ public class ShoppingListFragment extends Fragment {
     private FragmentShoppingListBinding mBinding;
     private ShoppingListAdapter mAdapter;
     private AppDatabase mDatabase;
-    private List<ShoppingItem> mShoppingItems;
+    private List<ShoppingItem> mShoppingItems = new ArrayList<>();
 
 
     public static ShoppingListFragment newInstance() {
@@ -43,7 +44,6 @@ public class ShoppingListFragment extends Fragment {
                 .build();
 
         new DatabaseAsyc().execute();
-
     }
 
     @Nullable
@@ -59,7 +59,6 @@ public class ShoppingListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateUI();
     }
 
     @Override
@@ -147,22 +146,21 @@ public class ShoppingListFragment extends Fragment {
         }
     }
 
-    private class DatabaseAsyc extends AsyncTask<Void, Void, Void> {
+    private class DatabaseAsyc extends AsyncTask<Void, Void, List<ShoppingItem>> {
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected List<ShoppingItem> doInBackground(Void... voids) {
 
-            mShoppingItems = mDatabase.shoppingItemsDao()
+            return mDatabase.shoppingItemsDao()
                     .getAllItems();
-
-            return null;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-
+        protected void onPostExecute(List<ShoppingItem> items) {
+            super.onPostExecute(items);
+            mShoppingItems.clear();
+            mShoppingItems.addAll(items);
+            updateUI();
         }
     }
 }
