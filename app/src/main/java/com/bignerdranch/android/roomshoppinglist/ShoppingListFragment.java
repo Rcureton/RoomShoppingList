@@ -1,6 +1,7 @@
 package com.bignerdranch.android.roomshoppinglist;
 
 import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bignerdranch.android.roomshoppinglist.database.AppDatabase;
 import com.bignerdranch.android.roomshoppinglist.database.ShoppingItem;
@@ -105,6 +107,7 @@ public class ShoppingListFragment extends Fragment {
 
         public ShoppingListItemHolder(ListShoppingItemBinding binding) {
             super(binding.getRoot());
+
             mItemBinding = binding;
         }
 
@@ -119,8 +122,10 @@ public class ShoppingListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Intent intent = ShoppingItemActivity.newIntent(getActivity(), mShoppingItem.getId());
-            startActivity(intent);
+            Toast.makeText(getActivity(), "I was clicked" + mShoppingItems.toString(), Toast.LENGTH_SHORT)
+                    .show();
+//            Intent intent = ShoppingItemActivity.newIntent(getActivity(), mShoppingItem.getId());
+//            startActivity(intent);
         }
     }
 
@@ -132,9 +137,10 @@ public class ShoppingListFragment extends Fragment {
         }
 
         @Override
-        public ShoppingListItemHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            ListShoppingItemBinding binding = ListShoppingItemBinding.inflate(inflater, viewGroup, false);
+        public ShoppingListItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            Context context = parent.getContext();
+            LayoutInflater inflater = LayoutInflater.from(context);
+            ListShoppingItemBinding binding = DataBindingUtil.inflate(inflater, R.layout.list_shopping_item, parent, false);
             return new ShoppingListItemHolder(binding);
         }
 
@@ -164,8 +170,6 @@ public class ShoppingListFragment extends Fragment {
 
             return null;
         }
-
-
 
         @Override
         protected void onPostExecute(Void aVoid) {

@@ -10,6 +10,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
+
     }
     buildTypes {
         release {
@@ -26,6 +29,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
 }
 
 dependencies {
@@ -36,11 +43,12 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'android.arch.persistence.room:runtime:1.0.0-alpha1'
-    annotationProcessor "android.arch.persistence.room:compiler:1.0.0-alpha1"
-    compile 'android.arch.persistence.room:rxjava2:1.0.0-alpha1'
-    compile 'android.arch.lifecycle:runtime:1.0.0-alpha1'
-    compile 'android.arch.lifecycle:extensions:1.0.0-alpha1'
-    annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha1"
+    compile 'android.arch.persistence.room:runtime:1.0.0-alpha2'
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0-alpha2"
+    compile 'android.arch.persistence.room:rxjava2:1.0.0-alpha2'
+    compile 'android.arch.lifecycle:runtime:1.0.0-alpha2'
+    compile 'android.arch.lifecycle:extensions:1.0.0-alpha2'
+    annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha2"
     compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.android.support:multidex:1.0.1'
 }
