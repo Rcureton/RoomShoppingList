@@ -3,15 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp">
 
         <TextView
             android:id="@+id/list_item_title_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="name of item"/>
+            android:text="name of item"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/list_item_date_text_view"
@@ -23,7 +27,8 @@
             android:id="@+id/list_item_store_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name of the store"/>
+            android:text="Name of the store"
+            android:textStyle="italic"/>
 
         <CheckBox
             android:id="@+id/list_item_purchased_checkbox"

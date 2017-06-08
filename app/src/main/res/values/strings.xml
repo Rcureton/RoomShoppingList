@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">RoomShoppingList</string>
+    <string name="add_shopping_item">Add Item</string>
+    <string name="title">Title</string>
+    <string name="enter_title">Enter the Item name</string>
+    <string name="save">Save</string>
+    <string name="enter_store">Enter name of store</string>
+    <string name="current_time">Current Time</string>
+    <string name="database_name">shopping-list</string>
+
+    <string name="db_name">shopping-list</string>
+
 </resources>

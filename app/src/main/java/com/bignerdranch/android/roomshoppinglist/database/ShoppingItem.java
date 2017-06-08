@@ -2,33 +2,39 @@ package com.bignerdranch.android.roomshoppinglist.database;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity
-public class ShoppingItems {
+public class ShoppingItem {
 
-    @PrimaryKey
-    private int uid;
+    @PrimaryKey private int id;
 
-    @ColumnInfo(name = "date")
-    private String date;
+    @ColumnInfo(name = "date") private String date;
 
-    @ColumnInfo(name = "item")
-    private String item;
+    @ColumnInfo(name = "item") private String item;
 
-    @ColumnInfo(name = "store")
-    private String store;
+    @ColumnInfo(name = "store") private String store;
 
-    @ColumnInfo(name = "purchased")
-    private boolean purchased;
+    @ColumnInfo(name = "purchased") private boolean purchased;
 
-
-    public int getUid() {
-        return uid;
+    public ShoppingItem() {
     }
 
-    public void setUid(int uid) {
-        this.uid = uid;
+    @Ignore
+    public ShoppingItem(int id, String item, String store, String date) {
+        this.id = id;
+        this.item = item;
+        this.store = store;
+        this.date = date;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getDate() {
