@@ -1,9 +1,8 @@
 package com.bignerdranch.android.roomshoppinglist;
 
 import android.arch.lifecycle.LifecycleFragment;
-import android.arch.persistence.room.Room;
+import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -28,6 +27,7 @@ public class ShoppingItemFragment extends LifecycleFragment {
     private String mItemTitle;
     private String mStoreName;
     private int mId;
+    private ShoppingListViewModel mShoppingListViewModel;
 
 
     public static ShoppingItemFragment newInstance(int uuid) {
@@ -42,8 +42,7 @@ public class ShoppingItemFragment extends LifecycleFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, getString(R.string.database_name))
-                .build();
+        mShoppingListViewModel = ViewModelProviders.of(this).get(ShoppingListViewModel.class);
 
         mId = getArguments().getInt(ARG_ITEM_ID);
     }
@@ -72,11 +71,11 @@ public class ShoppingItemFragment extends LifecycleFragment {
 
         mItemBinding.fragmentShoppingCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             mShoppingItem.setPurchased(isChecked);
-            updateItem();
         });
 
         mItemBinding.fragmentShoppingSaveButton.setOnClickListener(v -> {
-            new DatabaseAsyc().execute();
+            ShoppingItem shoppingItem = new ShoppingItem(UUID.randomUUID().hashCode(), mItemTitle, mStoreName, mDate);
+            mShoppingListViewModel.addItem(shoppingItem);
             getActivity().finish();
         });
 
@@ -88,16 +87,4 @@ public class ShoppingItemFragment extends LifecycleFragment {
                 .updateItem(mShoppingItem);
     }
 
-    private class DatabaseAsyc extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            ShoppingItem shoppingItem = new ShoppingItem(UUID.randomUUID().hashCode(), mItemTitle, mStoreName, mDate);
-
-            mDatabase.shoppingItemsDao()
-                    .insertItems(shoppingItem);
-
-            return null;
-        }
-    }
 }
