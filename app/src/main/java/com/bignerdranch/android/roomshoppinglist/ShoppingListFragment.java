@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bignerdranch.android.roomshoppinglist.database.AppDatabase;
 import com.bignerdranch.android.roomshoppinglist.database.ShoppingItem;
 import com.bignerdranch.android.roomshoppinglist.databinding.FragmentShoppingListBinding;
 import com.bignerdranch.android.roomshoppinglist.databinding.ListShoppingItemBinding;
@@ -31,11 +30,6 @@ public class ShoppingListFragment extends LifecycleFragment {
     private ShoppingListAdapter mAdapter;
     private List<ShoppingItem> mShoppingItems = new ArrayList<>();
     private ShoppingListViewModel mShoppingListViewModel;
-
-    private View.OnClickListener deleteClickListener = v -> {
-        ShoppingItem shoppingItem = (ShoppingItem) v.getTag();
-        mShoppingListViewModel.deleteItem(shoppingItem);
-    };
 
     public static ShoppingListFragment newInstance() {
         return new ShoppingListFragment();
@@ -92,6 +86,7 @@ public class ShoppingListFragment extends LifecycleFragment {
         public ShoppingListItemHolder(ListShoppingItemBinding binding) {
             super(binding.getRoot());
             itemView.setOnClickListener(this);
+            binding.listItemDeleteButton.setOnClickListener(this);
 
             mItemBinding = binding;
         }
@@ -106,8 +101,12 @@ public class ShoppingListFragment extends LifecycleFragment {
 
         @Override
         public void onClick(View v) {
-            Intent intent = ShoppingItemActivity.newIntent(getActivity(), mShoppingItem.getId());
-            startActivity(intent);
+            if (v == mItemBinding.listItemDeleteButton) {
+                mShoppingListViewModel.deleteItem(mShoppingItem);
+            } else {
+                Intent intent = ShoppingItemActivity.newIntent(getActivity(), mShoppingItem.getId());
+                startActivity(intent);
+            }
         }
     }
 
@@ -133,8 +132,6 @@ public class ShoppingListFragment extends LifecycleFragment {
         @Override
         public void onBindViewHolder(ShoppingListItemHolder shoppingListItemHolder, int i) {
             ShoppingItem shoppingItem = mShoppingItems.get(i);
-            shoppingListItemHolder.mItemBinding.listItemDeleteButton.setTag(shoppingItem);
-            shoppingListItemHolder.mItemBinding.listItemDeleteButton.setOnClickListener(deleteClickListener);
             shoppingListItemHolder.bind(shoppingItem);
         }
 

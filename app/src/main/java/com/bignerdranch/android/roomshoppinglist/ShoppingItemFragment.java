@@ -24,13 +24,12 @@ public class ShoppingItemFragment extends LifecycleFragment {
     private Date mDate;
     private String mItemTitle;
     private String mStoreName;
-    private int mId;
     private ShoppingListViewModel mShoppingListViewModel;
 
 
-    public static ShoppingItemFragment newInstance(int uuid) {
+    public static ShoppingItemFragment newInstance(int id) {
         Bundle args = new Bundle();
-        args.putSerializable(ARG_ITEM_ID, uuid);
+        args.putSerializable(ARG_ITEM_ID, id);
 
         ShoppingItemFragment fragment = new ShoppingItemFragment();
         fragment.setArguments(args);
