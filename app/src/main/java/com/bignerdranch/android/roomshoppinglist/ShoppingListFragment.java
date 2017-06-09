@@ -29,10 +29,13 @@ public class ShoppingListFragment extends LifecycleFragment {
 
     private FragmentShoppingListBinding mBinding;
     private ShoppingListAdapter mAdapter;
-    private AppDatabase mDatabase;
     private List<ShoppingItem> mShoppingItems = new ArrayList<>();
     private ShoppingListViewModel mShoppingListViewModel;
 
+    private View.OnClickListener deleteClickListener = v -> {
+        ShoppingItem shoppingItem = (ShoppingItem) v.getTag();
+        mShoppingListViewModel.deleteItem(shoppingItem);
+    };
 
     public static ShoppingListFragment newInstance() {
         return new ShoppingListFragment();
@@ -53,11 +56,13 @@ public class ShoppingListFragment extends LifecycleFragment {
         mAdapter = new ShoppingListAdapter(new ArrayList<>());
         mBinding.shoppingListRecyclerView.setAdapter(mAdapter);
 
-        mShoppingListViewModel = ViewModelProviders.of(this).get(ShoppingListViewModel.class);
-        mShoppingListViewModel.getItems().observe(this, items -> {
-            Log.d("EVENT", "list #" + items);
-            mAdapter.setShoppingItems(items);
-        });
+        mShoppingListViewModel = ViewModelProviders.of(this)
+                .get(ShoppingListViewModel.class);
+        mShoppingListViewModel.getItems()
+                .observe(this, items -> {
+                    Log.d("EVENT", "list #" + items);
+                    mAdapter.setShoppingItems(items);
+                });
 
         return mBinding.getRoot();
     }
@@ -95,9 +100,8 @@ public class ShoppingListFragment extends LifecycleFragment {
             mShoppingItem = shoppingItem;
             mItemBinding.listItemTitleTextView.setText(mShoppingItem.getItem());
             mItemBinding.listItemStoreTextView.setText(mShoppingItem.getStore());
-            mItemBinding.listItemDateTextView.setText(mShoppingItem.getDate().toString());
-            mItemBinding.listItemPurchasedCheckbox.setVisibility(mShoppingItem.isPurchased() ? View.VISIBLE : View.GONE);
-
+            mItemBinding.listItemDateTextView.setText(mShoppingItem.getDate()
+                    .toString());
         }
 
         @Override
@@ -109,6 +113,7 @@ public class ShoppingListFragment extends LifecycleFragment {
 
     private class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListItemHolder> {
         private List<ShoppingItem> mShoppingItems;
+        private ListShoppingItemBinding mItemBinding;
 
         public ShoppingListAdapter(List<ShoppingItem> shoppingItems) {
             mShoppingItems = shoppingItems;
@@ -118,13 +123,18 @@ public class ShoppingListFragment extends LifecycleFragment {
         public ShoppingListItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             Context context = parent.getContext();
             LayoutInflater inflater = LayoutInflater.from(context);
-            ListShoppingItemBinding binding = DataBindingUtil.inflate(inflater, R.layout.list_shopping_item, parent, false);
+            ListShoppingItemBinding binding = DataBindingUtil.inflate(inflater,
+                    R.layout.list_shopping_item,
+                    parent,
+                    false);
             return new ShoppingListItemHolder(binding);
         }
 
         @Override
         public void onBindViewHolder(ShoppingListItemHolder shoppingListItemHolder, int i) {
             ShoppingItem shoppingItem = mShoppingItems.get(i);
+            shoppingListItemHolder.mItemBinding.listItemDeleteButton.setTag(shoppingItem);
+            shoppingListItemHolder.mItemBinding.listItemDeleteButton.setOnClickListener(deleteClickListener);
             shoppingListItemHolder.bind(shoppingItem);
         }
 

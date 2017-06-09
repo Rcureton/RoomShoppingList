@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bignerdranch.android.roomshoppinglist.database.AppDatabase;
 import com.bignerdranch.android.roomshoppinglist.database.ShoppingItem;
 import com.bignerdranch.android.roomshoppinglist.databinding.FragmentShoppingItemBinding;
 
@@ -22,7 +21,6 @@ public class ShoppingItemFragment extends LifecycleFragment {
 
     private FragmentShoppingItemBinding mItemBinding;
     private ShoppingItem mShoppingItem;
-    private AppDatabase mDatabase;
     private Date mDate;
     private String mItemTitle;
     private String mStoreName;
@@ -42,14 +40,9 @@ public class ShoppingItemFragment extends LifecycleFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mShoppingListViewModel = ViewModelProviders.of(this).get(ShoppingListViewModel.class);
+        mShoppingListViewModel = ViewModelProviders.of(this)
+                .get(ShoppingListViewModel.class);
 
-        mId = getArguments().getInt(ARG_ITEM_ID);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
     }
 
     @Nullable
@@ -69,22 +62,14 @@ public class ShoppingItemFragment extends LifecycleFragment {
             mItemBinding.fragmentShoppingDateButton.setText(String.valueOf(mDate.getTime()));
         });
 
-        mItemBinding.fragmentShoppingCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            mShoppingItem.setPurchased(isChecked);
-        });
-
         mItemBinding.fragmentShoppingSaveButton.setOnClickListener(v -> {
-            ShoppingItem shoppingItem = new ShoppingItem(UUID.randomUUID().hashCode(), mItemTitle, mStoreName, mDate);
+            ShoppingItem shoppingItem = new ShoppingItem(UUID.randomUUID()
+                    .hashCode(), mItemTitle, mStoreName, mDate);
             mShoppingListViewModel.addItem(shoppingItem);
             getActivity().finish();
         });
 
         return mItemBinding.getRoot();
-    }
-
-    private void updateItem() {
-        mDatabase.shoppingItemsDao()
-                .updateItem(mShoppingItem);
     }
 
 }

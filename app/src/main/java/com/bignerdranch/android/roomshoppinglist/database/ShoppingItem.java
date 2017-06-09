@@ -20,10 +20,7 @@ public class ShoppingItem {
 
     @ColumnInfo(name = "store") private String store;
 
-    @ColumnInfo(name = "purchased") private boolean purchased;
-
     public ShoppingItem() {
-
     }
 
     @Ignore
@@ -72,11 +69,4 @@ public class ShoppingItem {
         this.store = store;
     }
 
-    public boolean isPurchased() {
-        return purchased;
-    }
-
-    public void setPurchased(boolean purchased) {
-        this.purchased = purchased;
-    }
 }
